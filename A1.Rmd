@@ -1,0 +1,31 @@
+---
+title: "Datenbanken - Aufgabe 1"
+author: "Simon Schäfer"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(DBI)
+
+conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite")
+```
+
+## Anfragen in natürlicher Sprache
+
+### Was geschah 2006 in den USA?
+
+### Wie suchte man damals nach Orten oder Wegbeschreibungen?
+
+### Zehn analytische Fragen (und was wir uns erhoffen)
+
+1. 
+
+### Datendesiderat klären
+
+```{r cleanup, include=FALSE}
+dbDisconnect(conn)
+```
