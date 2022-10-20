@@ -18,6 +18,14 @@ conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite")
 
 ### Was geschah 2006 in den USA?
 
+* twitter wurde gegründet
+  * nur 4 Suchanfragen, aber nichts hat mit dem Dienst zu tun
+* Google
+  * 14523 einzigartige Suchen (aus 560388)
+  * Maps: 2868 Anfragen
+* Facebook
+  * 15012 Suchanfragen
+
 ### Wie suchte man damals nach Orten oder Wegbeschreibungen?
 
 ### Zehn analytische Fragen (und was wir uns erhoffen)
