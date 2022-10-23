@@ -1,13 +1,16 @@
+library(tidyverse)
 library(DBI)
-library(RSQLite)
+# library(RSQLite)
 
-conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite")
+conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite", extended_types = TRUE)
 files <- list.files("AOL-user-ct-collection/")
 
 for (i in files) {
   temp_data <- rio::import(str_c("AOL-user-ct-collection/", i))
   dbWriteTable(conn, "aol_data", temp_data, append = TRUE)
 }
+
+dbDataType()
 
 dbListTables(conn)
 # dbRemoveTable(conn, "aol_data")
