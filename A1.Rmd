@@ -43,9 +43,10 @@ conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite")
   * Welche Torrents wurden gesucht?
   * Was suchten P2P Nutzer sonst so?
 * E3
-  * Welch Spiele wurden dort angekündigt?
+  * Welche Spiele wurden dort angekündigt?
   * Gab es Überraschungen?
   * Gibt es Peaks in den Suchen nach diesen Spielen davor / währenddessen / danach?
+  * Gibt es Peaks für andere Spiele im gleichen Zeitraum? (Allgemeines Interesse gestiegen?)
   * Welche Plattformen waren vertreten?
   * Wer besuchte die E3?
   * Wer suchte nach E3 auf AOL (statt auf Google)?
@@ -53,6 +54,7 @@ conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite")
   * Unterschieden diese Nutzer sich in ihrem weiteren Suchverhalten von anderen Nutzern?
   * Wie oft wurden die Stuioseiten in dem Zeitpunkt gesucht?
   * Wie oft wurde LA in dem Zeitraum gesucht?
+  
 * Wii
   * Welche Spiele gab es zu Release?
   * Wann wechselten die Suchen vom alten namen Revolution zum neuen Namen Wii?
@@ -83,8 +85,15 @@ Die Leute suchten mapquest.com und haben dann vermutlich da Routen geplant.
 1. Suchten die Nutzer auch nach Google?
 1. Über welche Anfragen landeten die Nutzer bei der E3 Seite (über Umwege)?
 1. Hatte die E3 einen Einfluss auf Suchanfragen zu LA?
+1. Korrelieren die Verkäufe der Spiele mit den Suchanfragen während der E3?
+1. Für welche Plattformen waren die Spiele angekündigt?
 
 ### Datendesiderat klären
+
+* Liste mit Spielen und deren Studios, die auf der E3 waren.
+* Liste anderer bereits erschienener Spiele.
+* Liste an PLattformen (PC, Nintendo DS, ...)
+* Liste mit Verkaufszahlen
 
 ```{r cleanup, include=FALSE}
 dbDisconnect(conn)

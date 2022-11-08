@@ -21,7 +21,7 @@ x2 <- e3_website_visitors_querys %>%
   summarise(Anzahl = n()) %>% 
   arrange(desc(Anzahl))
 
-e3_website_visitors_querys %>% filter(Query == "taz") # User 1996909 suchte 137 mal taz hat aber nier geklickt
+e3_website_visitors_querys %>% filter(Query == "taz") %>% distinct(QueryTime) # User 1996909 suchte 137 mal taz hat aber nier geklickt
 # nicht die Tageszeitung sondern die Figur von den Looney Tunes
 y <- e3_website_visitors_querys %>% filter(AnonID == 1996909)
 
@@ -44,16 +44,16 @@ n_e3_website_visitors/n_user*100 # 0.0166 % der Nutzer besuchten die e3 website 
 nonunique_querys <- dbGetQuery(conn, "SELECT Query, COUNT(Query) FROM aol_data GROUP BY Query HAVING COUNT(Query) > 1 ORDER BY COUNT(Query) DESC")
 wasIstPogo <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query='pogo'") # eine Online-Spiele-Seite
 pokemon <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%pokemon%'")
-pokemon_porn_guy <- dbGetQuery(conn, "SELECT * From aol_data WHERE AnonID=120726")
-porn <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%porn%'")
-porn %>% ggplot() + geom_histogram(aes(QueryTime), bins =184)
-porn %>% filter(QueryTime > as.Date("2006-05-17"), QueryTime < as.Date("2006-05-18"))
-xxx <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%xxx%'")
-sex <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%sex%'")
-tits <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%tits%'")
-boob <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%boob%'")
-ass <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%ass%'")
-dick <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%dick%'")
-cock <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%cock%'")
+# pokemon_porn_guy <- dbGetQuery(conn, "SELECT * From aol_data WHERE AnonID=120726")
+# porn <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%porn%'")
+# porn %>% ggplot() + geom_histogram(aes(QueryTime), bins =184)
+# porn %>% filter(QueryTime > as.Date("2006-05-17"), QueryTime < as.Date("2006-05-18"))
+# xxx <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%xxx%'")
+# sex <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%sex%'")
+# tits <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%tits%'")
+# boob <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%boob%'")
+# ass <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%ass%'")
+# dick <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%dick%'")
+# cock <- dbGetQuery(conn, "SELECT * From aol_data WHERE Query LIKE '%cock%'")
 
 dbDisconnect(conn)
