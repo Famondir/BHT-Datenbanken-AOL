@@ -10,7 +10,10 @@ for (i in files) {
   dbWriteTable(conn, "aol_data", temp_data, append = TRUE)
 }
 
-dbDataType()
+sales_data <- rio::import("vgsales.csv") %>% mutate_if(is.numeric, ~.*1000000)
+dbWriteTable(conn, "game_sales", sales_data)
+
+ydbDataType()
 
 dbListTables(conn)
 # dbRemoveTable(conn, "aol_data")
