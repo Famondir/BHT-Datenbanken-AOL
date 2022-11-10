@@ -11,4 +11,44 @@ game_urls <- simple %>%
   html_attr('href')
 
 games <- data.frame(Names = game_names, url = game_urls)[1:348,] %>% 
-  mutate(url = str_c("https://www.giantbomb.com/", url))
+  mutate(url = str_c("https://www.giantbomb.com", url))
+
+crawlData <- function(link) {
+ target_site <- tryCatch(
+   read_html(link),
+   error = function(e){NULL}
+ )
+ if (is.null(target_site)) return(NULL)
+ data <- target_site %>% html_nodes(".wiki-details .table:not(.js-release-table)") %>% html_table()
+ starrating <- target_site %>% html_node(".average-score") %>% html_text2() %>% str_remove(" stars") %>% as.double()
+ n_raters <- target_site %>% html_node(".average p") %>% html_text2() %>% str_extract_all("[0-9]*") %>% purrr::pluck(1) %>% str_flatten() %>% as.integer()
+ if (length(data)<1) return(NULL)
+ df <- data[[1]] %>% pivot_wider(names_from = "X1", values_from = "X2") %>% 
+   mutate(rating = starrating, raters = n_raters)
+}
+
+map_df_progress <- function(.x, .f, ..., .id = NULL) {
+  .f <- purrr::as_mapper(.f, ...)
+  pb <- progress::progress_bar$new(total = length(.x), force = TRUE)
+  
+  f <- function(...) {
+    pb$tick()
+    .f(...)
+  }
+  purrr::map_df(.x, f, ..., .id = .id)
+}
+
+# games_data1 <- map_df_progress(games$url[1:100], crawlData)
+# games_data2 <- map_df_progress(games$url[101:200], crawlData)
+# games_data3 <- map_df_progress(games$url[201:300], crawlData)
+# games_data4 <- map_df_progress(games$url[301:nrow(games)], crawlData)
+# games_data <- games_data1 %>% bind_rows(games_data2, games_data3, games_data4)
+# games_data <- map_df_progress(games$url, crawlData)
+# games_data %>% rio::export("crawled_games_data.xlsx")
+
+games_data <- rio::import("crawled_games_data.xlsx")
+
+sales_data <- rio::import("vgsales.csv") %>% mutate_if(is.numeric, ~.*1000000)
+
+games[which(games$Names == "Dragon Ball Z Tenkaichi 2"),1] <- "Dragon Ball Z: Budokai Tenkaichi 2"
+temp <- games %>% mutate(id = str_to_lower(Names)) %>% left_join(sales_data %>% mutate(id = str_to_lower(Name)), by = c("id" = "id"))
