@@ -48,7 +48,44 @@ map_df_progress <- function(.x, .f, ..., .id = NULL) {
 
 games_data <- rio::import("crawled_games_data.xlsx")
 
-sales_data <- rio::import("vgsales.csv") %>% mutate_if(is.numeric, ~.*1000000)
+sales_data <- rio::import("vgsales.csv") %>% mutate_if(is.numeric, ~.*1000000) %>% mutate(id = str_to_lower(Name))
+games <- games %>% mutate(id = str_to_lower(Names))
+setdiff(games$id, sales_data$id)
 
-games[which(games$Names == "Dragon Ball Z Tenkaichi 2"),1] <- "Dragon Ball Z: Budokai Tenkaichi 2"
-temp <- games %>% mutate(id = str_to_lower(Names)) %>% left_join(sales_data %>% mutate(id = str_to_lower(Name)), by = c("id" = "id"))
+games[which(games$id == "dragon ball z tenkaichi 2"),1] <- "dragon ball z: budokai tenkaichi 2"
+games[which(games$id == "arthur and the invisibles: the game"),1] <- "arthur and the invisibles"
+games[which(games$id == "dungeons & dragons: tactics"),1] <- "dungeons & dragons tactics"
+games[which(games$id == "hot pxl"),1] <- "hot pixel"
+games[which(games$id == "blade dancer"),1] <- "blade dancer: lineage of light"
+games[which(games$id == "disgaea 2"),1] <- "disgaea 2: cursed memories"
+games[which(games$id == "yggdra union"),1] <- "yggdra union: we'll never fight alone"
+games[which(games$id == "mercenaries 2"),1] <- "mercenaries 2: world in flames"
+games[which(games$id == "lumines ii"),1] <- "lumines ll"
+games[which(games$id == "lost planet"),1] <- "lost planet: extreme condition"
+games[which(games$id == "mega man battle network 6: cybeast gregar"),1] <- "mega man battle network 6: cybeast falzar / gregar"
+games[which(games$id == "monster hunter: freedom"),1] <- "monster hunter freedom"
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+games[which(games$id == ""),1] <- ""
+
+temp <- games %>% left_join(sales_data, by = c("id" = "id"))
