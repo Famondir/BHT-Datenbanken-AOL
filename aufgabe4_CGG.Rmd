@@ -45,10 +45,10 @@ query1aPrint <- searchinlist("SELECT count(distinct anonid) FROM aol_data where 
 
 query1a <- searchinlist("SELECT * FROM aol_data where query",
                         c('e3', 'e3 %', '% e3', '% e3 %'),
-                        "group by anonid;")
+                        "group by anonid, querytime;")
 
 data_q1a <- dbGetQuery(conn, query1a)
-anzahl_nutzer_e3_query <- nrow(data_q1a)
+anzahl_nutzer_e3_query <- data_q1a %>% select(AnonID) %>% unique() %>% nrow()
 
 query1bPrint <- searchinlist("SELECT count(distinct anonid) FROM aol_data where clickurl", 
                              c('%e3expo.com%', '%e3insider.com%'),
@@ -56,10 +56,10 @@ query1bPrint <- searchinlist("SELECT count(distinct anonid) FROM aol_data where 
 
 query1b <- searchinlist("SELECT * FROM aol_data where clickurl", 
                         c('%e3expo.com%', '%e3insider.com%'),
-                        "group by anonid;")
+                        "group by anonid, querytime;")
 
 data_q1b <- dbGetQuery(conn, query1b) %>% as_tibble()
-anzahl_nutzer_e3_click <- nrow(data_q1b)
+anzahl_nutzer_e3_click <- data_q1b %>% select(AnonID) %>% unique() %>% nrow()
 ```
 
 ```{r, results = 'asis', echo = F}
@@ -89,5 +89,5 @@ union(data_q1a, data_q1b) %>% ggplot() +
   geom_histogram(aes(x = QueryTime), color = "black") +
   annotate("rect", xmin = as.POSIXct("2006-05-10"), xmax = as.POSIXct("2006-05-12"), 
                 ymin = -10, ymax = 120, fill = "#88FF55", alpha = .4) +
-  coord_cartesian(ylim = c(0, 70))
+  coord_cartesian(ylim = c(0, 110))
 ```

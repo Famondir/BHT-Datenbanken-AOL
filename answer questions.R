@@ -60,5 +60,54 @@ union(q1_data_b, q1_data_a) %>% ggplot() +
                 ymin = -10, ymax = 120, fill = "#88FF55", alpha = .4) +
   coord_cartesian(ylim = c(0, 110))
 
+#### Q3: Wie viele Nutzer suchten nach Titeln, die auf der E3 vertreten waren? ####
+
+dbExecute(conn, "create view distinct_query as 
+          Select anonid, querytime, query From aol_data 
+          group by anonid, querytime;")
+dbExecute(conn, "create view game_searches as  
+          Select game from game
+          union
+          select alias as game from gamealias")
+# zu rechenintensiv
+# data_q3 <- dbGetQuery(conn, "Select * from distinct_query, game_searches
+#            where query like '%' || lower(game) || '%';") %>% as_tibble
+
+# nichts zu sehen
+sims2_data <- dbGetQuery(conn, "Select * from distinct_query where query like '% sims 2 %'
+           or query like 'sims 2 %' or query like '% sims 2' or query like 'sims 2';") %>% as_tibble
+
+sims2_data %>% ggplot() + 
+  geom_histogram(aes(x = QueryTime), color = "black") +
+  # geom_vline(xintercept = as.POSIXct("2006-05-10"), color = "#88FF55") +
+  # geom_vline(xintercept = as.POSIXct("2006-05-12"), color = "#88FF55") +
+  annotate("rect", xmin = as.POSIXct("2006-05-10"), xmax = as.POSIXct("2006-05-12"), 
+           ymin = -10, ymax = 250, fill = "#88FF55", alpha = .4) +
+  coord_cartesian(ylim = c(0, 200))
+
+# peak ab reveal
+wii_data <- dbGetQuery(conn, "Select * from distinct_query where query like '% wii %'
+           or query like 'wii %' or query like '% wii' or query like 'wii';") %>% as_tibble
+
+wii_data %>% ggplot() + 
+  geom_histogram(aes(x = QueryTime), color = "black") +
+  # geom_vline(xintercept = as.POSIXct("2006-05-10"), color = "#88FF55") +
+  # geom_vline(xintercept = as.POSIXct("2006-05-12"), color = "#88FF55") +
+  annotate("rect", xmin = as.POSIXct("2006-05-10"), xmax = as.POSIXct("2006-05-12"), 
+           ymin = -10, ymax = 250, fill = "#88FF55", alpha = .4) +
+  coord_cartesian(ylim = c(0, 200))
+
+# nicht zu sehen
+revolution_data <- dbGetQuery(conn, "Select * from distinct_query where query like '% revolution %'
+           or query like 'revolution %' or query like '% revolution' or query like 'revolution';") %>% as_tibble
+
+revolution_data %>% ggplot() + 
+  geom_histogram(aes(x = QueryTime), color = "black") +
+  # geom_vline(xintercept = as.POSIXct("2006-05-10"), color = "#88FF55") +
+  # geom_vline(xintercept = as.POSIXct("2006-05-12"), color = "#88FF55") +
+  annotate("rect", xmin = as.POSIXct("2006-05-10"), xmax = as.POSIXct("2006-05-12"), 
+           ymin = -10, ymax = 250, fill = "#88FF55", alpha = .4) +
+  coord_cartesian(ylim = c(0, 200))
+
 #### Close connection ####
 dbDisconnect(conn)
