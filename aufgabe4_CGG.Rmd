@@ -76,11 +76,17 @@ Dieser Befehl ergibt: `r anzahl_nutzer_e3_click`.
 
 Eine Vergleich der jeweils nur in einem Ergebnis enthaltenen Queries ergab, dass auch nach `e3.com` gesucht werden sollte. Sonst findet man 28 valide Treffer im ersten Befehl nicht! In der Vereinigung erhät man `r union(data_q1a, data_q1b) %>% select(AnonID) %>% unique() %>% nrow()` eindeutige Nutzer (inklusive false positives).
 
-False positive rate des ersten Befehls ca. 10 %. Hier ein prominenter missmatch:
+<div style="float: left; width: 50%;">
+<p>Sucht man nach allen Suchbegriffen, die Nutzer auf die Seiten der e3 landeten, erhält man 348 Personen. Hierunter sind aber auch Suchenanfragen, die vermutlich gar nicht auf die e3 abzielten. So oder so: man muss per Hand die Ergebnisse selektieren.</p>
 
-```{r, out.width='25%', fig.align='center'}
+<p>False positive rate des ersten Befehls ca. 10 %. Hier ein prominenter missmatch:</p>
+</div>
+
+<div style="float: right; width: 50%;">
+```{r, out.width='50%', fig.align='center'}
 knitr::include_graphics('img/phil-teds-sport-buggy-in-apple-green-colour_1.webp')
 ```
+</div>
 
 ## Frage 2: Wie sieht die zeitliche Verteilung der Suchanfragen aus Frage 1 aus?
 
@@ -91,3 +97,11 @@ union(data_q1a, data_q1b) %>% ggplot() +
                 ymin = -10, ymax = 120, fill = "#88FF55", alpha = .4) +
   coord_cartesian(ylim = c(0, 110))
 ```
+
+## Probleme
+
+* Verbindung zur Datenbank aus R heraus (Windows ODBC konnte nicht erstellt werden)
+* Kreuzprodukte für `LIKE` Anfragen schnell zu groß
+  * besser eine Funktion nutzen, die einen SQL-Befehl mit ganz vielen `OR` erstellt
+* Oracle beschwert sich, wenn nicht alle selektierten Attribute gruppiert oder aggregiert werden
+* `GROUP BY` vs. `DISTINCT`
