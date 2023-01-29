@@ -101,6 +101,7 @@ games <- dbGetQuery(conn, "select id, game from game")
 games_id <- dbGetQuery(conn, "select id from game")
 
 # data_list <- list()
+data_list <- readRDS("data/potentialgamesearchqueries.rds")
 for (i in games_id$ID[101:200]) {
   print(i)
   data_list[[i]] <- dbGetQuery(conn, glue::glue("Select * from distinct_query, 
@@ -110,6 +111,7 @@ for (i in games_id$ID[101:200]) {
 data_list %>% saveRDS("data/potentialgamesearchqueries.rds")
 
 # data_list2 <- list()
+data_list2 <- readRDS("data/potentialgamesearchqueries2.rds")
 for (i in games_id$ID[1:10]) {
   print(i)
   data_list2[[i]] <- dbGetQuery(conn, glue::glue("Select * from distinct_query, 
@@ -251,6 +253,7 @@ for (i in games_id$ID) {
 platforms <- dbGetQuery(conn, "select * from platform")
 
 # data_list3 <- list()
+data_list3 <- readRDS("data/potentialgamesearchqueries3.rds")
 for (i in seq_along(platforms$platform)) {
   print(i)
   data_list3[[i]] <- dbGetQuery(conn, glue::glue("Select * from distinct_query

@@ -3,7 +3,7 @@ library(DBI)
 
 conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite", extended_types = TRUE)
 
-for (i in games_id$ID[101:200]) {
+for (i in games_id$ID[301:338]) {
   print(i)
   if (!is.null(data_list[[i]]) && data_list[[i]] %>% nrow() > 0) {
     data_list2[[i]] <- dbGetQuery(conn, glue::glue("Select * from distinct_query, 
