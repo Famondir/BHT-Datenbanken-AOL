@@ -103,5 +103,10 @@ union(data_q1a, data_q1b) %>% ggplot() +
 * Verbindung zur Datenbank aus R heraus (Windows ODBC konnte nicht erstellt werden)
 * Kreuzprodukte für `LIKE` Anfragen schnell zu groß
   * besser eine Funktion nutzen, die einen SQL-Befehl mit ganz vielen `OR` erstellt
+  * oder einzelne queries schicken und die Daten extern sammeln, damit man auch noch den Text der einen Query als neue Spalte anfügen kann
 * Oracle beschwert sich, wenn nicht alle selektierten Attribute gruppiert oder aggregiert werden
-* `GROUP BY` vs. `DISTINCT`
+  * `GROUP BY` vs. `DISTINCT
+* automatisierte Abfragen geben oft nur einen Ansatzpunkt dafür, die Abfragen händisch zu optimieren
+  * Mit `%` muss man bei Abkürzungen sehr aufpassen. Leerzeichen können schon helfen. Aber `% ac %` findet man auch eine Menge, dass nicht mit Assassin's Creed zu tun hat.
+  * manchmal helfen aber auch eher die Abkürzungen (v. a. für etablierte Titel); bspw. `ps3`
+* Das Nutzen von einer view, in der aggregiert wird, kann große Performanceeinbußen bringen; eine materialisierte view kann hier helfen (1000x gleiche Aggregation gemacht, weil die Operation hinter der view nicht mehr klar war)
