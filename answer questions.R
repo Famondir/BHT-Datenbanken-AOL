@@ -49,6 +49,32 @@ saveplot <- function(df, name, path, facet = NULL) {
   }
   
   g %>% ggsave(filename = str_c(path, glue::glue("{name %>% str_remove('//') %>% str_replace(':', '-')}.pdf")), plot = ., width = 25, height = 19, units = "cm")  
+  return(g)
+}
+
+extract_distinct_ids <- function(l) {
+  if (is.null(l)) return(c())
+  else {
+    l %>% filter(str_length(game) > 2, 
+                 str_to_lower(game) != "cars",
+                 str_to_lower(game) != "contact",
+                 str_to_lower(game) != "eba",
+                 str_to_lower(game) != "eee",
+                 str_to_lower(game) != "fear",
+                 str_to_lower(game) != "haze",
+                 str_to_lower(game) != "lair",
+                 str_to_lower(game) != "msa",
+                 str_to_lower(game) != "mp3",
+                 str_to_lower(game) != "over the hedge",
+                 str_to_lower(game) != "resistance",
+                 str_to_lower(game) != "scarface",
+                 str_to_lower(game) != "superman returns",
+                 str_to_lower(game) != "the club",
+                 str_to_lower(game) != "the da vinci code",
+                 str_to_lower(game) != "the darkness",
+                 str_to_lower(game) != "wic",
+    ) %>% pull(AnonID) %>% unique()
+  }
 }
 
 #### connect to DB ####
@@ -56,6 +82,16 @@ saveplot <- function(df, name, path, facet = NULL) {
 conn <- dbConnect(RSQLite::SQLite(), "aol.sqlite", extended_types = TRUE)
 
 dbListTables(conn)
+
+#### DDL ####
+
+# dbExecute(conn, "create view distinct_query as 
+#           Select anonid, querytime, query From aol_data 
+#           group by anonid, querytime;")
+# dbExecute(conn, "create view game_searches as  
+#           Select id, game from game
+#           union
+#           select gameid as id, alias as game from gamealias")
 
 #### create and save data (long runtime only) ####
 
@@ -169,42 +205,12 @@ union(q1_data_b, q1_data_a) %>% saveplot("E3", "plots/q2/")
 
 #### Q3: Wie viele Nutzer suchten nach Titeln, die auf der E3 vertreten waren? ####
 
-dbExecute(conn, "create view distinct_query as 
-          Select anonid, querytime, query From aol_data 
-          group by anonid, querytime;")
-dbExecute(conn, "create view game_searches as  
-          Select id, game from game
-          union
-          select gameid as id, alias as game from gamealias")
 # zu rechenintensiv
 # data_q3 <- dbGetQuery(conn, "Select * from distinct_query, game_searches
 #            where query like '%' || lower(game) || '%';") %>% as_tibble
 
-extract_distinct_ids <- function(l) {
-  if (is.null(l)) return(c())
-  else {
-    l %>% filter(str_length(game) > 2, 
-                 str_to_lower(game) != "cars",
-                 str_to_lower(game) != "contact",
-                 str_to_lower(game) != "eba",
-                 str_to_lower(game) != "eee",
-                 str_to_lower(game) != "fear",
-                 str_to_lower(game) != "haze",
-                 str_to_lower(game) != "lair",
-                 str_to_lower(game) != "msa",
-                 str_to_lower(game) != "mp3",
-                 str_to_lower(game) != "over the hedge",
-                 str_to_lower(game) != "resistance",
-                 str_to_lower(game) != "scarface",
-                 str_to_lower(game) != "superman returns",
-                 str_to_lower(game) != "the club",
-                 str_to_lower(game) != "the da vinci code",
-                 str_to_lower(game) != "the darkness",
-                 str_to_lower(game) != "wic",
-                 ) %>% pull(AnonID) %>% unique()
-  }
-}
-
+# ohne cleaning ergibt 8370568 es unique ids
+# data_list_game%>% unlist() %>% unique() %>% length()
 # ergibt 58487 unique ids
 distinct_ids <- map(data_list_game, extract_distinct_ids) %>% unlist() %>% unique()
 # ergibt 2200 unique IDs
@@ -250,6 +256,7 @@ for (i in games_id$ID) {
 ac_data <- dbGetQuery(conn, "select * from distinct_query where query like ('%assassin%creed%')") # 31 Treffer
 ac_data_auto <- data_list_game_stronger_filter[[321]] # 2 Treffer und 3394 false positives
 
+saveplot(ac_data_auto, "Assassins Creed auto", "plots/q4/manual/", quo(game))
 saveplot(ac_data, "Assassins Creed manual", "plots/q4/manual/")
 
 #### Q5: Wie groß ist die Schnittmenge zwischen den Nutzern aus Frage 1 und Frage 3? ####
@@ -318,7 +325,7 @@ query_rank_non_e3_user2 <- dbGetQuery(conn, glue::glue("select query, count(quer
 #   mutate(qc_e3 = qc_e3/sum(qc_e3)*100, qc_non_e3 = qc_non_e3/sum(qc_non_e3)*100)
 # perc_queries2 %>% saveRDS("data/perc_searchqueries.rds")
 
-perc_queries2 <- saveRDS("data/perc_searchqueries.rds")
+perc_queries2 <- readRDS("data/perc_searchqueries.rds")
 
 # perc_queries2 %>% arrange(desc(qc_e3)) %>% slice(1:100) %>% ggplot() +
 #   geom_point(aes(x = qc_e3, y = qc_non_e3)) +
@@ -337,7 +344,7 @@ search_compare_plot <- perc_queries2 %>% pivot_longer(cols = -Query) %>% arrange
        subtitle = "zwischen e3-Interessierten und anderen") +
   xlab("Anteil in % (also unter 1 %)") +
   ylab("Suchanfrage") +
-  theme(legend.position = "bottom") +
+  # theme(legend.position = "bottom") +
   scale_fill_discrete(name = "e3-Interessiert", labels = c("Ja", "Nein"))
 
 search_compare_plot %>% ggsave(path = "plots/q7/", filename = "Vergleich der top 25 Suchanfragenhäufigkeiten.pdf", units = "cm", width = 25, height = 19)
@@ -365,7 +372,8 @@ google_plot %>% ggsave(path = "plots/q8/", filename = "Google.pdf", units = "cm"
 
 #### Q9: Über welche Anfragen landeten die Nutzer bei der E3 Seite (über Umwege)? ####
 
-q1_data_b %>% filter(!str_detect(Query, "e3|e 3|electronic entertainment expo|electronic expo"))
+q1_data_b %>% filter(!str_detect(Query, "e3|e 3|electronic entertainment expo|electronic expo")) %>% 
+  pull(AnonID) %>% unique() %>% length()
 
 #### Q10: Hatte die E3 einen Einfluss auf Suchanfragen zu LA? ####
 la_data <- dbGetQuery(conn, "select * from aol_data where query like '%los angeles%'
@@ -388,7 +396,15 @@ for ( i in platforms$id) {
 ps3_data <- dbGetQuery(conn, "select * from distinct_query 
                        where query like '%ps 3%' or query like '%ps3%'")
 
-saveplot(ps3_data, "PS3", "plots/platforms/manual/")
+saveplot(ps3_data, "PS3 manual", "plots/platforms/manual/")
+
+saveplot(ps3_data, "PS3 manual", "plots/platforms/manual/")
+
+wii_data <- dbGetQuery(conn, "select * from distinct_query 
+                       where query like 'wii' or query like 'wii %'
+                       or query like '% wii %' or query like '% wii'")
+
+saveplot(wii_data, "Wii manual", "plots/platforms/manual/")
 
 #### Bonusfrage 2: Suchverteilung nach Publishern ####
 
@@ -397,6 +413,11 @@ for ( i in publisher$ID) {
     saveplot(data_list_publisher[[i]], publisher$publisher[[i]], "plots/publisher/single/")
   }
 }
+
+#### Handarbeit ####
+blizzard_data <- dbGetQuery(conn, "select * from distinct_query 
+                       where query like '%blizzard%'")
+blizzard_data %>% saveplot("Blizzard manual", "plots/publisher/manual/")
 
 #### Close connection ####
 dbDisconnect(conn)

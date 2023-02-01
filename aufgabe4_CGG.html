@@ -9,7 +9,7 @@
 
 
 
-  <meta name="date" content="2023-01-30" />
+  <meta name="date" content="2023-02-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3137,7 +3137,7 @@ ul.task-list{list-style: none;}
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
       
       <p data-config-presenter><!-- populated from slide_config.json --></p>
-            <p style="margin-top: 6px; margin-left: -2px;">2023-01-30</p>
+            <p style="margin-top: 6px; margin-left: -2px;">2023-02-01</p>
           </hgroup>
   </slide>
 
@@ -3189,8 +3189,18 @@ False positive rate des ersten Befehls ca. 10 %. Hier ein prominenter missmatch:
 <li>besser eine Funktion nutzen, die einen SQL-Befehl mit ganz vielen <code>OR</code> erstellt</li>
 <li>oder einzelne queries schicken und die Daten extern sammeln, damit man auch noch den Text der einen Query als neue Spalte anfügen kann</li>
 </ul></li>
-<li>Oracle beschwert sich, wenn nicht alle selektierten Attribute gruppiert oder aggregiert werden</li>
-<li><code>GROUP BY</code> vs. <code>DISTINCT</code></li>
+<li>Oracle beschwert sich, wenn nicht alle selektierten Attribute gruppiert oder aggregiert werden
+
+<ul>
+<li><code>GROUP BY</code> vs. `DISTINCT</li>
+</ul></li>
+<li>automatisierte Abfragen geben oft nur einen Ansatzpunkt dafür, die Abfragen händisch zu optimieren
+
+<ul>
+<li>Mit <code>%</code> muss man bei Abkürzungen sehr aufpassen. Leerzeichen können schon helfen. Aber <code>% ac %</code> findet man auch eine Menge, dass nicht mit Assassin’s Creed zu tun hat.</li>
+<li>manchmal helfen aber auch eher die Abkürzungen (v. a. für etablierte Titel); bspw. <code>ps3</code></li>
+</ul></li>
+<li>Das Nutzen von einer view, in der aggregiert wird, kann große Performanceeinbußen bringen; eine materialisierte view kann hier helfen (1000x gleiche Aggregation gemacht, weil die Operation hinter der view nicht mehr klar war)</li>
 </ul></article></slide>
 
 
